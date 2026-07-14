@@ -8,10 +8,9 @@ SoftwareSerial sim(7, 8);
 #define DIR_PIN      5
 #define ENABLE_PIN   8   // shared with SoftwareSerial TX
 #define STATUS_LED  13
-// 1/8 microstepping, 200-step motor: 200*8 = 1600 steps/rev, 90deg = 400 steps
-// Hardware: remove BOTH MS1 and MS2 jumpers from CNC shield (TMC2208 MS1=OUT, MS2=OUT = 1/8)
-#define STEPS_90    400
-#define STEP_DELAY  1000  // microseconds per half-step pulse
+// Full step mode (no jumpers), 200-step motor: 200 steps/rev, 90deg = 50 steps
+#define STEPS_90     50
+#define STEP_DELAY  3000  // microseconds per half-step pulse
 
 static char     rxBuf[256];
 static uint16_t rxLen;
@@ -61,6 +60,8 @@ void pwrkeyPulse() {
   digitalWrite(PWRKEY_PIN, HIGH);
   delay(1500);
   digitalWrite(PWRKEY_PIN, LOW);
+  delay(100);
+  digitalWrite(PWRKEY_PIN, HIGH);  // re-assert HIGH so DRV8825 RST/SLP stays awake
 }
 
 bool wakeModule() {
